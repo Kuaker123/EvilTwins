@@ -65,7 +65,7 @@ Este proyecto se desarrolla como Práctica Académica Oficial dentro del plan de
 
 | Panel de Administración | Configuración de Ataque |
 |:---:|:---:|
-| ![Interfaz de Admin](Gemelos malvados/admin.png) | ![Vista del panel desarrollado](panel.png) |
+| ![Interfaz de Admin](admin.png) | ![Vista del panel desarrollado](panel.png) |
 
 
 
