@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema SIE</title>
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2310312B'/%3E%3Ctext x='32' y='42' font-family='Poppins,Arial' font-size='28' font-weight='800' fill='%23BC955C' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body { height: 100%; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #6F7271 0%, #10312B 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        /* ===== FONDO ANIMADO (como el original SIE) ===== */
+        .sie-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .sie-bg::before {
+            content: '';
+            position: absolute;
+            width: 700px; height: 700px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #BC955C 0%, transparent 65%);
+            opacity: 0.15;
+            top: -200px; right: -150px;
+            animation: pulse-orb 8s ease-in-out infinite alternate;
+        }
+        .sie-bg::after {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #BC955C 0%, transparent 65%);
+            opacity: 0.1;
+            bottom: -100px; left: -100px;
+            animation: pulse-orb 10s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes pulse-orb {
+            from { transform: scale(1); opacity: 0.08; }
+            to   { transform: scale(1.2); opacity: 0.18; }
+        }
+
+        /* ===== NAVBAR SUPERIOR (verde institucional #10312B) ===== */
+        .navbar-top {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: #10312B !important;
+            padding: 0 24px;
+            height: 58px;
+            box-shadow: 0 2px 30px rgba(0,0,0,0.25);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .navbar-top h3 {
+            color: #FFFFFF;
+            font-size: 0.88rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        /* ===== HERO / LOGO ===== */
+        .sie-hero {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 100px 24px 40px;
+        }
+        .sie-logo-outer {
+            position: relative;
+            width: 130px; height: 130px;
+            margin-bottom: 24px;
+        }
+        .sie-logo-outer::before,
+        .sie-logo-outer::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+        .sie-logo-outer::before {
+            border-top-color: #BC955C;
+            border-right-color: rgba(255,255,255,0.15);
+            animation: spin 4s linear infinite;
+        }
+        .sie-logo-outer::after {
+            inset: -14px;
+            border-bottom-color: #BC955C;
+            border-left-color: rgba(255,255,255,0.08);
+            animation: spin 7s linear infinite reverse;
+            opacity: 0.6;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .sie-logo-inner {
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #BC955C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px #BC955C, inset 0 0 20px rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+        .sie-logo-inner svg { width: 80px; height: 80px; }
+        .sie-hero-title {
+            color: #FFFFFF;
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+        .sie-hero-sub {
+            color: rgba(255,255,255,0.45);
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 400;
+            margin-bottom: 8px;
+        }
+        .sie-hero-inst {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        /* ===== PANEL PRINCIPAL (vidrio esmerilado) ===== */
+        .sie-panel {
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.07) !important;
+            border: 1px solid rgba(255,255,255,0.12) !important;
+            border-radius: 28px !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            margin: 32px 20px 90px !important;
+            padding: 36px 28px !important;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.12) !important;
+            max-width: 1100px;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        .sie-panel.hide-menu { display: none; }
+
+        /* ===== GRID DE TARJETAS (modo menú) ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+        .menu-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 22px;
+            padding: 0;
+            overflow: hidden;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-height: 200px;
+        }
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #BC955C, transparent);
+            z-index: 2;
+        }
+        .menu-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(255,255,255,0.12);
+            border-color: #BC955C;
+            box-shadow: 0 24px 50px rgba(0,0,0,0.3), 0 0 20px #BC955C;
+        }
+        .menu-card .card-icon {
+            width: 100%;
+            padding: 28px 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .menu-card .card-icon svg {
+            width: 52px; height: 52px;
+            object-fit: contain;
+            fill: #BC955C;
+            filter: drop-shadow(0 4px 12px #BC955C);
+        }
+        .menu-card .card-content {
+            padding: 18px 18px 20px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .menu-card .card-content h4 {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.3;
+        }
+        .menu-card .card-content h4 strong { color: #BC955C; font-weight: 800; }
+        .menu-card .card-content p {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.75rem;
+            font-weight: 400;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* ===== FORMULARIOS DE LOGIN ===== */
+        .login-screen {
+            position: relative;
+            z-index: 1;
+            max-width: 460px;
+            margin: 0 auto 90px;
+            display: none;
+        }
+        .login-screen.show { display: block; animation: fadeSlide 0.4s ease; }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .back-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .back-row a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+        .back-row a:hover {
+            color: #fff;
+            border-color: #BC955C;
+            background: rgba(188,149,92,0.12);
+        }
+
+        .login-card {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 26px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 34px 30px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+        .login-card::before {
+            content: '';
+            display: block;
+            height: 3px;
+            margin: -34px -30px 26px;
+            border-radius: 26px 26px 0 0;
+            background: linear-gradient(90deg, transparent, #BC955C, transparent);
+        }
+        .login-head {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .login-head .mini-icon {
+            width: 54px; height: 54px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(188,149,92,0.25), rgba(188,149,92,0.08));
+            border: 1px solid #BC955C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .login-head .mini-icon svg { width: 28px; height: 28px; fill: #BC955C; }
+        .login-head h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .login-head h2 strong { color: #BC955C; font-weight: 800; }
+        .login-head p {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.5);
+            margin: 0;
+        }
+
+        .field { margin-bottom: 18px; }
+        .field label {
+            display: block;
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.85);
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+        .field label .req { color: #e67373; margin-left: 3px; }
+        .field .input-wrap { position: relative; }
+        .field .input-wrap .prefix {
+            position: absolute;
+            left: 1px; top: 1px; bottom: 1px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            background: rgba(188,149,92,0.12);
+            color: #BC955C;
+            font-weight: 700;
+            font-size: 0.82rem;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px 0 0 10px;
+            pointer-events: none;
+            letter-spacing: 0.3px;
+        }
+        .field input {
+            width: 100%;
+            padding: 13px 14px;
+            padding-left: 108px;
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 11px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .field input.no-prefix { padding-left: 14px; }
+        .field input::placeholder { color: rgba(255,255,255,0.3); }
+        .field input:focus {
+            outline: none;
+            border-color: #BC955C;
+            background: rgba(255,255,255,0.09);
+            box-shadow: 0 0 0 4px rgba(188,149,92,0.12);
+        }
+        .field input:-webkit-autofill {
+            -webkit-text-fill-color: #fff;
+            -webkit-box-shadow: 0 0 0 1000px rgba(10,40,35,1) inset;
+            caret-color: #fff;
+        }
+
+        .captcha-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 14px;
+            border-radius: 11px;
+            margin-bottom: 22px;
+        }
+        .captcha-code {
+            font-family: 'Courier New', monospace;
+            font-size: 1.25rem;
+            font-weight: bold;
+            letter-spacing: 4px;
+            color: #fff;
+            background: repeating-linear-gradient(45deg, rgba(188,149,92,0.12), rgba(188,149,92,0.12) 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 4px);
+            padding: 7px 16px;
+            border: 1px dashed rgba(255,255,255,0.3);
+            border-radius: 7px;
+            user-select: none;
+        }
+        .captcha-row small { color: rgba(255,255,255,0.45); font-size: 0.78rem; flex: 1; line-height: 1.3; }
+        .captcha-row button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.7);
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .captcha-row button:hover {
+            color: #BC955C;
+            border-color: #BC955C;
+            background: rgba(188,149,92,0.08);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, #BC955C 0%, #d4a96b 100%);
+            color: #10312B;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(188,149,92,0.35);
+            transition: all 0.15s;
+        }
+        .submit-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+        .submit-btn:active { transform: translateY(0) scale(0.98); }
+
+        .extra-links {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            font-size: 0.78rem;
+        }
+        .extra-links a {
+            color: #BC955C;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .extra-links a:hover { color: #fff; text-decoration: underline; }
+
+        .alert {
+            background: rgba(255,200,80,0.1);
+            border: 1px solid rgba(255,200,80,0.25);
+            color: #f0d79c;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            margin-bottom: 18px;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            line-height: 1.4;
+        }
+
+        /* ===== FOOTER ===== */
+        .navbar-bottom {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: #10312B !important;
+            border-top: 1px solid rgba(255,255,255,0.08) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            padding: 12px 20px;
+        }
+        .footer-copyright {
+            color: rgba(255,255,255,0.35) !important;
+            font-size: 0.72rem !important;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        .footer-copyright a {
+            color: #BC955C !important;
+            text-decoration: none;
+            transition: color 0.2s;
+            margin: 0 4px;
+        }
+        .footer-copyright a:hover { color: #fff !important; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .card-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .sie-hero-title { font-size: 1.8rem; }
+            .sie-panel { margin: 28px 14px 90px !important; padding: 28px 18px !important; }
+        }
+        @media (max-width: 640px) {
+            .navbar-top h3 { font-size: 0.68rem; letter-spacing: 1.5px; }
+            .sie-hero { padding: 78px 16px 28px; }
+            .sie-logo-outer, .sie-logo-inner { width: 100px; height: 100px; }
+            .sie-logo-inner svg { width: 60px; height: 60px; }
+            .sie-hero-title { font-size: 1.3rem; }
+            .sie-hero-inst { font-size: 0.85rem; }
+            .sie-panel { margin: 20px 10px 80px !important; padding: 20px 12px !important; border-radius: 20px !important; }
+            .card-grid { grid-template-columns: 1fr; gap: 14px; }
+            .menu-card { border-radius: 16px; min-height: 160px; }
+            .menu-card .card-icon svg { width: 40px; height: 40px; }
+            .login-card { padding: 26px 20px; }
+            .login-card::before { margin: -26px -20px 20px; }
+            .login-screen { margin-left: 10px; margin-right: 10px; margin-bottom: 80px; }
+        }
+        @media (max-width: 380px) {
+            .navbar-top h3 { font-size: 0.6rem; }
+            .sie-hero-title { font-size: 1.1rem; }
+            .login-head h2 { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sie-bg"></div>
+
+    <!-- ===== NAVBAR SUPERIOR ===== -->
+    <nav class="navbar-top">
+        <h3>Sistema de Integración Escolar (SIE)</h3>
+    </nav>
+
+    <!-- ===== HERO / LOGO ===== -->
+    <div class="sie-hero">
+        <div class="sie-logo-outer">
+            <div class="sie-logo-inner">
+                <!-- Logo del TecNM estilo SIE (verde+oro) -->
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="lg1" x1="0" y1="0" x2="100" y2="100">
+                            <stop offset="0%" stop-color="#BC955C"/>
+                            <stop offset="100%" stop-color="#e8c68c"/>
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="url(#lg1)" stroke-width="3"/>
+                    <text x="50" y="62" text-anchor="middle" font-family="Poppins, Arial" font-size="38" font-weight="800" fill="url(#lg1)">T</text>
+                </svg>
+            </div>
+        </div>
+        <h1 class="sie-hero-title">Sistema de Integración<br>Escolar</h1>
+        <p class="sie-hero-sub">SIE — Plataforma Escolar</p>
+        <p class="sie-hero-inst">Instituto Tecnológico de Tapachula</p>
+    </div>
+
+    <!-- ===== PANEL: MENÚ DE 3 TARJETAS ===== -->
+    <div id="menuPanel" class="sie-panel">
+        <div class="card-grid">
+
+            <!-- TARJETA 1: SIE ESTUDIANTE -->
+            <div class="menu-card" onclick="showLogin('estudiante')">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 12c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5z"/></svg>
+                </div>
+                <div class="card-content">
+                    <h4>SIE <strong>Estudiante</strong></h4>
+                    <p>Módulo de Consultas y Servicios para los Estudiantes</p>
+                </div>
+            </div>
+
+            <!-- TARJETA 2: SIE DOCENTE -->
+            <div class="menu-card" onclick="showLogin('docente')">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 17.5V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12.5L9 14l3 2 3-2 6 3.5zM6 10a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+                </div>
+                <div class="card-content">
+                    <h4>SIE <strong>Docente</strong></h4>
+                    <p>Módulo de Consultas y Actividades Docentes</p>
+                </div>
+            </div>
+
+            <!-- TARJETA 3: SIE ASPIRANTE -->
+            <div class="menu-card" onclick="showLogin('aspirante')">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 8-4.4V17h2V9L12 3zm4 11.3L12 17l-4-2.7V17l4 2 4-2v-2.7z"/></svg>
+                </div>
+                <div class="card-content">
+                    <h4>SIE <strong>Aspirante</strong></h4>
+                    <p>Módulo del Proceso de Selección de Aspirantes a Nuevo Ingreso</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===== LOGIN: ESTUDIANTE ===== -->
+    <div id="loginEstudiante" class="login-screen">
+        <div class="back-row"><a href="#" onclick="showMenu();return false;">← Volver al menú principal</a></div>
+        <form class="login-card" action="/" method="post">
+            <input type="hidden" name="modulo" value="SIE-Estudiante">
+            <div class="login-head">
+                <div class="mini-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 12c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5z"/></svg>
+                </div>
+                <div>
+                    <h2>SIE <strong>Estudiante</strong></h2>
+                    <p>Iniciar sesión · No. de Control</p>
+                </div>
+            </div>
+
+            <div class="alert">ℹ️ Periodo Enero-Junio 2026 abierto. Si cambias tu contraseña temporal, recuerda anotarla. El sistema no la recupera.</div>
+
+            <div class="field">
+                <label>No. de Control<span class="req">*</span></label>
+                <div class="input-wrap">
+                    <span class="prefix">24IT</span>
+                    <input type="text" name="control" maxlength="8" placeholder="00XX" pattern="[0-9A-Za-z]+" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Contraseña SIE<span class="req">*</span></label>
+                <input type="password" name="password" class="no-prefix" placeholder="••••••••" autocomplete="off" required>
+            </div>
+
+            <div class="field">
+                <label>Código de seguridad<span class="req">*</span></label>
+                <input type="text" name="captcha" class="no-prefix" maxlength="5" placeholder="Introduce el código mostrado abajo" required>
+            </div>
+            <div class="captcha-row">
+                <div class="captcha-code">8K2A7</div>
+                <small>Introduce el código tal como aparece (mayúsculas). Si no lo distingues, actualiza con ↻.</small>
+                <button type="button" title="Actualizar código">🔄</button>
+            </div>
+
+            <button type="submit" class="submit-btn">INGRESAR A MI SIE</button>
+
+            <div class="extra-links">
+                <a href="#">¿Olvidaste tu contraseña?</a>
+                <a href="#">Primer acceso · Activar cuenta</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== LOGIN: DOCENTE ===== -->
+    <div id="loginDocente" class="login-screen">
+        <div class="back-row"><a href="#" onclick="showMenu();return false;">← Volver al menú principal</a></div>
+        <form class="login-card" action="/" method="post">
+            <input type="hidden" name="modulo" value="SIE-Docente">
+            <div class="login-head">
+                <div class="mini-icon">
+                    <svg viewBox="0 0 24 24"><path d="M21 17.5V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12.5L9 14l3 2 3-2 6 3.5zM6 10a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+                </div>
+                <div>
+                    <h2>SIE <strong>Docente</strong></h2>
+                    <p>Iniciar sesión · Clave del Trabajador</p>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Clave de Trabajador<span class="req">*</span></label>
+                <div class="input-wrap">
+                    <span class="prefix">TAP-</span>
+                    <input type="text" name="clave_docente" maxlength="10" placeholder="XXXX" required>
+                </div>
+            </div>
+            <div class="field">
+                <label>Curp (últimos 8 dígitos)<span class="req">*</span></label>
+                <input type="text" name="curp" class="no-prefix" maxlength="18" placeholder="Ej: HEGJ010198HTSRNN08" required>
+            </div>
+            <div class="field">
+                <label>Contraseña de Acceso<span class="req">*</span></label>
+                <input type="password" name="password" class="no-prefix" placeholder="••••••••" autocomplete="off" required>
+            </div>
+
+            <div class="field">
+                <label>Código de seguridad<span class="req">*</span></label>
+                <input type="text" name="captcha" class="no-prefix" maxlength="5" placeholder="Código de imagen" required>
+            </div>
+            <div class="captcha-row">
+                <div class="captcha-code">T5D4M</div>
+                <small>Código captcha. Revisa mayúsculas y minúsculas.</small>
+                <button type="button" title="Actualizar código">🔄</button>
+            </div>
+
+            <button type="submit" class="submit-btn">ENTRAR AL MODULO DOCENTE</button>
+
+            <div class="extra-links">
+                <a href="#">Restablecer contraseña</a>
+                <a href="#">Solicitar cuenta · RH</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== LOGIN: ASPIRANTE ===== -->
+    <div id="loginAspirante" class="login-screen">
+        <div class="back-row"><a href="#" onclick="showMenu();return false;">← Volver al menú principal</a></div>
+        <form class="login-card" action="/" method="post">
+            <input type="hidden" name="modulo" value="SIE-Aspirante">
+            <div class="login-head">
+                <div class="mini-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 3 1 9l11 6 8-4.4V17h2V9L12 3zm4 11.3L12 17l-4-2.7V17l4 2 4-2v-2.7z"/></svg>
+                </div>
+                <div>
+                    <h2>SIE <strong>Aspirante</strong></h2>
+                    <p>Proceso de Selección a Nuevo Ingreso 2026</p>
+                </div>
+            </div>
+
+            <div class="alert">📢 Convocatoria 2026: Registro abierto al 15 de junio. Conserva tu folio; será solicitado en todo el proceso.</div>
+
+            <div class="field">
+                <label>Folio de Registro<span class="req">*</span></label>
+                <div class="input-wrap">
+                    <span class="prefix">TCH-</span>
+                    <input type="text" name="folio" maxlength="12" placeholder="ASP-2026-XXXXX" required>
+                </div>
+            </div>
+            <div class="field">
+                <label>CURP completa<span class="req">*</span></label>
+                <input type="text" name="curp" class="no-prefix" maxlength="18" placeholder="Ej: AABC990215HTSPLL00" style="text-transform:uppercase;" required>
+            </div>
+            <div class="field">
+                <label>NIP / Contraseña<span class="req">*</span></label>
+                <input type="password" name="password" class="no-prefix" placeholder="••••••••" autocomplete="off" required>
+            </div>
+
+            <div class="field">
+                <label>Captcha<span class="req">*</span></label>
+                <input type="text" name="captcha" class="no-prefix" maxlength="5" placeholder="Escribe el código" required>
+            </div>
+            <div class="captcha-row">
+                <div class="captcha-code">9Y3KP</div>
+                <small>Verificación anti-bot. Si el código no se ve, actualiza con el botón ↻.</small>
+                <button type="button" title="Actualizar código">🔄</button>
+            </div>
+
+            <button type="submit" class="submit-btn">CONTINUAR REGISTRO</button>
+
+            <div class="extra-links">
+                <a href="#">¿Aún no te registras? Crear cuenta</a>
+                <a href="#">Recuperar folio</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <nav class="navbar-bottom">
+        <div class="footer-copyright">
+            © 2026 Práctica Académica — Ingeniería en Ciberseguridad · Tecnológico de Tapachula &nbsp;|&nbsp;
+            Creadores: <strong style="color:#BC955C;">Adalid Santos Cruz e IA</strong> &nbsp;|&nbsp;
+            <a href="#" target="_blank">Aviso de privacidad</a>
+            · v4.2.1
+        </div>
+    </nav>
+
+    <!-- ===== CONTROL DE VISTAS ===== -->
+    <script>
+        function showLogin(tipo) {
+            document.getElementById('menuPanel').classList.add('hide-menu');
+            document.getElementById('loginEstudiante').classList.remove('show');
+            document.getElementById('loginDocente').classList.remove('show');
+            document.getElementById('loginAspirante').classList.remove('show');
+            var el = document.getElementById('login' +
+                tipo.charAt(0).toUpperCase() + tipo.slice(1));
+            if (el) {
+                el.classList.add('show');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+        function showMenu() {
+            document.getElementById('loginEstudiante').classList.remove('show');
+            document.getElementById('loginDocente').classList.remove('show');
+            document.getElementById('loginAspirante').classList.remove('show');
+            document.getElementById('menuPanel').classList.remove('hide-menu');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        // Bloquear clic derecho (igual que en el SIE original)
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        // Actualizar captcha al azar al darle al 🔄 (solo visual, no importa el valor)
+        document.querySelectorAll('.captcha-row button').forEach(function(btn){
+            btn.addEventListener('click', function(){
+                var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+                var code = "";
+                for (var i=0; i<5; i++) code += chars.charAt(Math.floor(Math.random()*chars.length));
+                var box = btn.parentElement.querySelector('.captcha-code');
+                if (box) box.textContent = code;
+            });
+        });
+    </script>
+
+</body>
+</html>

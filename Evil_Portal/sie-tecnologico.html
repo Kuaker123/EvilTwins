@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SIE - Sistema Integral de Estudiantes | Tecnológico de Tapachula</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
+  html,body{height:100%;}
+  body{background:#e9ecef;background:linear-gradient(135deg,#0b3d91 0%,#1e56a0 50%,#0b3d91 100%);min-height:100vh;display:flex;flex-direction:column;}
+
+  /* ===== FRanja superior institucional ===== */
+  .top-bar{background:#002855;border-bottom:3px solid #d4a017;padding:10px 20px;display:flex;
+          align-items:center;justify-content:space-between;flex-wrap:wrap;}
+  .logos{display:flex;align-items:center;gap:15px;}
+  .logo-circle{width:48px;height:48px;background:white;border-radius:50%;
+               display:flex;align-items:center;justify-content:center;font-weight:bold;color:#002855;
+               border:2px solid #d4a017;font-size:1rem;}
+  .institute-name{color:white;}
+  .institute-name h2{font-size:0.95rem;font-weight:600;letter-spacing:0.3px;}
+  .institute-name p{font-size:0.75rem;color:#c8d6e5;margin-top:2px;}
+  .sie-badge{background:#d4a017;color:#002855;padding:6px 14px;border-radius:4px;
+             font-weight:bold;font-size:0.85rem;}
+
+  /* ===== Contenedor principal ===== */
+  .main{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 15px;}
+  .login-wrapper{display:grid;grid-template-columns:1.1fr 1fr;max-width:920px;width:100%;
+                 background:white;border-radius:10px;overflow:hidden;
+                 box-shadow:0 10px 40px rgba(0,0,0,0.3);}
+
+  /* ===== Lado izquierdo informativo ===== */
+  .side-info{background:linear-gradient(160deg,#003366 0%,#004080 100%);
+             padding:40px 35px;color:white;display:flex;flex-direction:column;justify-content:space-between;}
+  .side-info h1{font-size:1.45rem;margin-bottom:8px;color:#ffd766;border-bottom:2px solid #d4a017;
+                padding-bottom:10px;}
+  .side-info .sub{font-size:0.9rem;color:#b8cde5;margin-bottom:25px;}
+  .feature-list{list-style:none;}
+  .feature-list li{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;font-size:0.88rem;}
+  .feature-list li .ic{background:rgba(212,160,23,0.18);color:#ffd766;border:1px solid #d4a017;
+                       border-radius:50%;width:28px;height:28px;display:flex;align-items:center;
+                       justify-content:center;flex-shrink:0;font-size:0.75rem;font-weight:bold;}
+  .announcement{background:rgba(255,255,255,0.07);border-left:4px solid #d4a017;
+                padding:14px 16px;border-radius:4px;margin-top:20px;font-size:0.82rem;}
+  .announcement strong{color:#ffd766;display:block;margin-bottom:4px;font-size:0.85rem;}
+  .footer-info{font-size:0.72rem;color:#93a8c5;margin-top:25px;line-height:1.4;}
+
+  /* ===== Lado derecho formulario ===== */
+  .form-side{padding:45px 40px;display:flex;flex-direction:column;justify-content:center;}
+  .form-header{text-align:center;margin-bottom:30px;}
+  .form-header .icon{font-size:2.5rem;margin-bottom:8px;}
+  .form-header h3{color:#002855;font-size:1.35rem;margin-bottom:5px;}
+  .form-header p{color:#6c757d;font-size:0.88rem;}
+
+  .form-group{margin-bottom:18px;}
+  .form-group label{display:block;font-size:0.85rem;color:#002855;font-weight:600;margin-bottom:6px;}
+  .form-group label .req{color:#c0392b;margin-left:3px;}
+
+  .input-wrap{position:relative;}
+  .input-wrap .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+                     color:#003366;font-weight:700;font-size:0.85rem;background:#eef2f7;
+                     padding:6px 10px;border-right:1px solid #dee2e6;border-radius:5px 0 0 5px;
+                     pointer-events:none;}
+  .input-wrap.prefixed input{padding-left:95px;}
+  .form-group input{width:100%;padding:13px 14px;border:1.5px solid #ced4da;border-radius:6px;
+                    font-size:0.95rem;transition:all 0.2s;background:#fbfcfe;}
+  .form-group input:focus{outline:none;border-color:#0b3d91;background:white;
+                          box-shadow:0 0 0 3px rgba(11,61,145,0.12);}
+  .form-group input::placeholder{color:#adb5bd;}
+
+  .captcha-row{display:flex;align-items:center;gap:10px;background:#f8f9fa;border:1px solid #dee2e6;
+               padding:12px 14px;border-radius:6px;margin:10px 0 20px;}
+  .captcha-code{font-family:'Courier New',monospace;font-size:1.2rem;font-weight:bold;
+                letter-spacing:3px;color:#002855;background:repeating-linear-gradient(45deg,#fff,#fff 2px,#f1f3f5 2px,#f1f3f5 4px);
+                padding:6px 14px;border:1px dashed #adb5bd;border-radius:4px;user-select:none;}
+  .captcha-row small{color:#6c757d;font-size:0.78rem;flex:1;}
+  .captcha-row button{background:transparent;border:none;color:#0b3d91;font-size:1.1rem;cursor:pointer;}
+
+  .btn-login{width:100%;padding:14px;background:linear-gradient(90deg,#0b3d91,#1e56a0);
+             color:white;border:none;border-radius:6px;font-weight:700;font-size:1rem;
+             cursor:pointer;letter-spacing:0.5px;transition:transform 0.1s;
+             box-shadow:0 4px 14px rgba(11,61,145,0.35);}
+  .btn-login:hover{opacity:0.95;}
+  .btn-login:active{transform:scale(0.98);}
+
+  .form-links{margin-top:22px;font-size:0.82rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .form-links a{color:#0b3d91;text-decoration:none;}
+  .form-links a:hover{text-decoration:underline;}
+
+  .alert{background:#fff3cd;border:1px solid #ffc107;color:#856404;padding:10px 14px;
+         border-radius:6px;font-size:0.82rem;margin-bottom:20px;display:flex;gap:8px;align-items:flex-start;}
+  .alert .ic{flex-shrink:0;}
+
+  /* ===== Pie de página ===== */
+  .footer-bar{background:#001a33;color:#93a8c5;text-align:center;padding:12px 20px;font-size:0.75rem;
+              border-top:2px solid #d4a017;}
+  .footer-bar .sep{margin:0 8px;opacity:0.4;}
+
+  /* ===== Responsive ===== */
+  @media(max-width:768px){
+    .login-wrapper{grid-template-columns:1fr;}
+    .side-info{padding:28px 25px;}
+    .form-side{padding:35px 28px;}
+    .institute-name h2{font-size:0.85rem;}
+    .sie-badge{display:none;}
+  }
+  @media(max-width:380px){
+    .logo-circle{width:40px;height:40px;font-size:0.85rem;}
+    .form-side{padding:30px 20px;}
+    .side-info{padding:22px 18px;}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== Barra superior institucional ===== -->
+  <div class="top-bar">
+    <div class="logos">
+      <div class="logo-circle">IT</div>
+      <div class="institute-name">
+        <h2>Tecnológico de Tapachula</h2>
+        <p>Campus Tapachula • Dirección de Servicios Escolares</p>
+      </div>
+    </div>
+    <div class="sie-badge">SIE v4.2</div>
+  </div>
+
+  <!-- ===== Bloque principal ===== -->
+  <div class="main">
+    <div class="login-wrapper">
+
+      <!-- Lado izquierdo informativo -->
+      <div class="side-info">
+        <div>
+          <h1>Bienvenido al SIE</h1>
+          <p class="sub">Plataforma oficial de servicios escolares</p>
+          <ul class="feature-list">
+            <li><span class="ic">✓</span><span>Consulta de calificaciones parciales y finales</span></li>
+            <li><span class="ic">✓</span><span>Horarios de clases y carga académica</span></li>
+            <li><span class="ic">✓</span><span>Reinscripción y selección de materias</span></li>
+            <li><span class="ic">✓</span><span>Solicitudes de constancias y kárdex</span></li>
+            <li><span class="ic">✓</span><span>Estado de cuenta y pagos escolares</span></li>
+          </ul>
+
+          <div class="announcement">
+            <strong>📢 Aviso Importante</strong>
+            Periodo de reinscripciones Semestre Enero-Junio 2026 abierto del 06 al 17 de enero. 
+            Actualiza tus datos personales antes de iniciar el trámite.
+          </div>
+        </div>
+        <div class="footer-info">
+          © Dirección de Tecnologías de la Información y Comunicaciones (DTIC)<br>
+          Tecnológico de Tapachula · Ingeniería en Ciberseguridad · Práctica Académica<br>
+          Soporte Institucional: soporte.sie@tapachula.tecnm.mx
+        </div>
+      </div>
+
+      <!-- Lado derecho formulario de login -->
+      <div class="form-side">
+        <div class="form-header">
+          <div class="icon">🎓</div>
+          <h3>Iniciar Sesión</h3>
+          <p>Introduce tus credenciales institucionales</p>
+        </div>
+
+        <div class="alert">
+          <span class="ic">ℹ️</span>
+          <span>Para estudiantes: No. de control. Para docentes: Clave de trabajador. Administrativos: Usuario de red.</span>
+        </div>
+
+        <form action="/" method="post">
+
+          <div class="form-group">
+            <label>Usuario<span class="req">*</span></label>
+            <div class="input-wrap prefixed">
+              <span class="prefix">ITMEX-</span>
+              <input type="text" name="user" maxlength="12" placeholder="Ej: 20241234" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Contraseña institucional<span class="req">*</span></label>
+            <input type="password" name="password" placeholder="••••••••" autocomplete="off" required>
+          </div>
+
+          <div class="form-group">
+            <label>Código de seguridad<span class="req">*</span></label>
+            <input type="text" name="captcha" maxlength="5" placeholder="Introduce el código mostrado" required>
+          </div>
+
+          <div class="captcha-row">
+            <div class="captcha-code" title="Código de verificación">S7A2K</div>
+            <small>Código de seguridad (sensible a mayúsculas)</small>
+            <button type="button" title="Actualizar código">🔄</button>
+          </div>
+
+          <button type="submit" class="btn-login">INGRESAR AL SISTEMA</button>
+
+          <div class="form-links">
+            <a href="#">¿Olvidaste tu contraseña?</a>
+            <a href="#">Primer acceso / Registro</a>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Pie institucional ===== -->
+  <div class="footer-bar">
+    <span>© 2026 Tecnológico de Tapachula · Práctica Académica</span><span class="sep">|</span>
+    <span>Creadores: Adalid Santos Cruz e IA</span><span class="sep">|</span>
+    <span>Aviso de privacidad integral</span><span class="sep">|</span>
+    <span>Versión del sistema: 4.2.1 (build 20251218)</span>
+  </div>
+
+</body>
+</html>
